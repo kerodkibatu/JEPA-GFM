@@ -7,6 +7,10 @@ This repository contains a **Proof of Concept (PoC)** implementation of **JEPA-G
 
 The model was developed as part of the **UN Hackathon Challenge 2: Solving the “Geo-Puzzle”**, aimed at addressing critical gaps in combining **multi-hazard data layers** with **child vulnerability factors**. By learning universal representations of geospatial inputs, JEPA-GFM enables **automated spatial reconciliation**, **scenario modeling**, and **real-time risk intelligence** that can be integrated into tools like **Giga Spatial** and **CCRI-DRM dashboards**.
 
+## 📊 Example Training Results
+![Example Training](predictions.png)
+![Validation](training_curves.png)
+
 ## 🔍 Key Objectives
 
 - ✅ Solve the "Geo-Puzzle": Harmonize mismatched geospatial datasets (raster weather forecasts, vector infrastructure points, administrative-boundary child poverty rates)
