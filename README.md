@@ -1,42 +1,58 @@
-# JEPA-GFM: Joint Embedding Predictive Architecture for Geospatial Foundation Model
-
-This repository contains a Proof of Concept (POC) implementation of JEPA-GFM, a geospatial foundation model based on the Joint Embedding Predictive Architecture (JEPA). Unlike the original V-JEPA which processes temporal video frames, JEPA-GFM is designed to handle different geospatial data layers and modalities with varying resolutions.
+# JEPA-GFM: Joint Embedding Predictive Architecture for Geospatial Foundation Model  
+*A GeoSpatial Foundation Model for Child-Centered Climate Risk Analysis*
 
 ## 🌍 Overview
 
-JEPA-GFM adapts the powerful self-supervised learning approach of JEPA to the geospatial domain, enabling the model to:
+This repository contains a **Proof of Concept (PoC)** implementation of **JEPA-GFM**, a geospatial foundation model based on the **Joint Embedding Predictive Architecture (JEPA)**. Unlike traditional computer vision models, JEPA-GFM is designed to handle **heterogeneous geospatial data** — including rasters, vectors, and tabular indicators — enabling seamless alignment across **different resolutions, formats, and spatial references**.
 
-- **Process Multiple Modalities**: Handle RGB imagery, elevation data, vegetation indices, multispectral bands, and other geospatial data types
-- **Multi-Resolution Support**: Work with different spatial resolutions and automatically adapt input sizes
-- **Self-Supervised Learning**: Learn rich geospatial representations without requiring labeled data
-- **Foundation Model Capabilities**: Serve as a backbone for various downstream geospatial tasks
+The model was developed as part of the **UN Hackathon Challenge 2: Solving the “Geo-Puzzle”**, aimed at addressing critical gaps in combining **multi-hazard data layers** with **child vulnerability factors**. By learning universal representations of geospatial inputs, JEPA-GFM enables **automated spatial reconciliation**, **scenario modeling**, and **real-time risk intelligence** that can be integrated into tools like **Giga Spatial** and **CCRI-DRM dashboards**.
+
+## 🔍 Key Objectives
+
+- ✅ Solve the "Geo-Puzzle": Harmonize mismatched geospatial datasets (raster weather forecasts, vector infrastructure points, administrative-boundary child poverty rates)
+- ✅ Build a reusable, self-supervised geospatial foundation model
+- ✅ Enable plug-and-play decoders for downstream tasks (e.g., child exposure scoring, flood impact simulation)
+- ✅ Integrate with Giga Spatial for ingestion and preprocessing
+- ✅ Visualize results via CCRI-DRM-compatible dashboards
+
+---
 
 ## 🏗️ Architecture
 
-The JEPA-GFM architecture consists of three main components:
+JEPA-GFM adapts the **JEPA framework** from vision AI to the geospatial domain. It learns high-level representations of diverse spatial data without requiring labeled examples. The architecture includes:
 
-1. **Context Encoder**: Processes visible patches from geospatial data
-2. **Target Encoder**: Encodes target patches with exponential moving average updates
-3. **Predictor Network**: Predicts representations of masked patches in the feature space
+1. **Context Encoder**: Encodes visible parts of geospatial data (weather maps, rasters, etc.)
+2. **Target Encoder**: Maintains target representations using exponential moving average (EMA) updates
+3. **Predictor Network**: Learns to predict masked region representations from context
+4. **Decoder Modules**: Lightweight task-specific heads for:
+   - Child exposure scoring
+   - Flood-child overlay analysis
+   - Uncertainty quantification
+   - Scenario modeling
 
 ### Key Features
 
-- **Patch-based Processing**: Divides geospatial images into patches for efficient processing
-- **Multi-Head Attention**: Captures spatial relationships between different regions
-- **Modality Fusion**: Combines information from multiple geospatial data sources
-- **Adaptive Resolution**: Handles variable input sizes through adaptive pooling
+- **Multi-modal input support**: Raster, vector, and tabular data
+- **Self-supervised learning**: No need for labeled training data
+- **Latent space alignment**: Enables cross-format comparison
+- **Modular design**: Easy integration with Giga Spatial and CCRI-DRM
+
+---
 
 ## 📁 Project Structure
 
 ```
-GettingStarted/
+jepa-gfm/
 ├── jepa.py              # Core JEPA-GFM model implementation
-├── train.py             # Training script with synthetic data
-├── generate_data.py     # Synthetic geospatial data generation
-├── test.py              # Comprehensive testing and evaluation
+├── train.py             # Training script with synthetic geospatial data
+├── generate_data.py     # Synthetic data generation mimicking real-world datasets
+├── test.py              # Testing scripts for multi-resolution handling and fusion
+├── giga_spatial_adapter.py  # Adapter module for Giga Spatial integration
 ├── requirements.txt     # Python dependencies
 └── README.md           # This file
 ```
+
+---
 
 ## 🚀 Getting Started
 
@@ -45,10 +61,10 @@ GettingStarted/
 1. Clone this repository:
 ```bash
 git clone <repository-url>
-cd GettingStarted
+cd jepa-gfm
 ```
 
-2. Create a virtual environment (recommended):
+2. Create a virtual environment:
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
@@ -65,185 +81,130 @@ pip install -r requirements.txt
 ```bash
 python generate_data.py
 ```
-This creates synthetic geospatial data with multiple modalities (RGB, elevation, vegetation, multispectral).
+Generates synthetic geospatial layers simulating hurricane paths, school locations, and child population density.
 
 #### 2. Train the Model
 ```bash
 python train.py
 ```
-Trains the JEPA-GFM model on synthetic data with configurable parameters.
+Trains JEPA-GFM encoder on synthetic geospatial data.
 
 #### 3. Test the Model
 ```bash
 python test.py
 ```
-Runs comprehensive tests including multi-resolution handling, modality fusion, and downstream tasks.
-
-## 🔧 Usage Examples
-
-### Basic Model Usage
-
-```python
-from jepa import create_jepa_gfm
-import torch
-
-# Create model
-model = create_jepa_gfm({
-    'img_size': 224,
-    'patch_size': 16,
-    'embed_dim': 768,
-    'encoder_depth': 12,
-    'predictor_depth': 6
-})
-
-# Prepare geospatial data (list of tensors for different modalities)
-rgb_data = torch.randn(1, 3, 224, 224)
-elevation_data = torch.randn(1, 3, 224, 224)
-layers = [rgb_data, elevation_data]
-
-# Training mode: mask and predict
-model.train()
-outputs = model(layers, mask_ratio=0.75)
-
-# Inference mode: encode for downstream tasks
-model.eval()
-features = model.encode_geospatial_data(layers)
-```
-
-### Custom Data Integration
-
-```python
-from generate_data import GeospatialDataGenerator
-
-# Generate custom synthetic data
-generator = GeospatialDataGenerator(base_size=256)
-sample = generator.generate_sample(
-    modalities=['rgb', 'elevation', 'vegetation'],
-    size=256
-)
-
-# Convert to tensors for model input
-layers = [torch.from_numpy(data).unsqueeze(0) for data in sample.values()]
-```
-
-## 🧪 Model Configuration
-
-The model supports various configuration options:
-
-```python
-config = {
-    'img_size': 224,           # Input image size
-    'patch_size': 16,          # Patch size for tokenization
-    'embed_dim': 768,          # Embedding dimension
-    'encoder_depth': 12,       # Number of encoder layers
-    'predictor_depth': 6,      # Number of predictor layers
-    'num_heads': 12,           # Number of attention heads
-    'mlp_ratio': 4.0,          # MLP expansion ratio
-    'dropout': 0.1             # Dropout rate
-}
-```
-
-## 📊 Performance Characteristics
-
-### Supported Modalities
-- ✅ RGB imagery
-- ✅ Elevation/DEM data
-- ✅ Vegetation indices (NDVI-like)
-- ✅ Multispectral bands (NIR, SWIR, etc.)
-- ✅ Custom single/multi-channel data
-
-### Resolution Support
-- ✅ 128×128 to 512×512 pixels (tested)
-- ✅ Automatic resizing for different input sizes
-- ✅ Patch-based processing for memory efficiency
-
-### Model Sizes
-- **Small**: 512 dim, 8 layers (~25M parameters)
-- **Base**: 768 dim, 12 layers (~85M parameters)
-- **Large**: 1024 dim, 16 layers (~300M parameters)
-
-## 🔬 Technical Details
-
-### Self-Supervised Learning Objective
-
-JEPA-GFM uses a joint embedding objective where:
-1. Context patches are encoded to create representations
-2. Target patches are encoded separately (with EMA updates)
-3. A predictor network learns to predict target representations from context
-4. Loss is computed in the representation space (not pixel space)
-
-### Multi-Modal Fusion
-
-The model handles multiple modalities through:
-- Separate patch embedding for each modality
-- Shared transformer backbone
-- Cross-modal attention mechanisms
-- Feature aggregation for downstream tasks
-
-### Training Strategy
-
-- **Masking Strategy**: Random patch masking (75% default)
-- **Optimization**: AdamW with cosine annealing
-- **Target Network Updates**: Exponential moving average (0.996 momentum)
-- **Data Augmentation**: Built-in through synthetic data generation
-
-## 🎯 Applications
-
-JEPA-GFM can be applied to various geospatial tasks:
-
-- **Land Cover Classification**: Classify different terrain types
-- **Change Detection**: Identify changes over time
-- **Environmental Monitoring**: Track vegetation, water bodies, etc.
-- **Disaster Response**: Analyze affected areas
-- **Urban Planning**: Monitor urban development
-- **Agriculture**: Crop monitoring and yield prediction
-
-## 📈 Evaluation
-
-The test suite includes:
-
-- **Multi-Resolution Handling**: Tests input size flexibility
-- **Modality Fusion**: Evaluates multi-modal integration
-- **Reconstruction Quality**: Measures patch prediction accuracy
-- **Downstream Tasks**: Land cover classification example
-- **Attention Visualization**: Feature map analysis
-
-Run `python test.py` for comprehensive evaluation.
-
-## 🚧 Limitations & Future Work
-
-### Current Limitations
-- Synthetic data only (for demonstration)
-- Limited to square images
-- Simple modality fusion strategy
-- No temporal modeling
-
-### Future Enhancements
-- Real geospatial data integration
-- Advanced fusion mechanisms
-- Spatio-temporal modeling
-- Hierarchical multi-scale processing
-- Integration with existing GIS workflows
-
-## 📚 References
-
-1. **I-JEPA**: Assran, M., et al. "Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture." CVPR 2023.
-2. **V-JEPA**: Bardes, A., et al. "Revisiting Feature Prediction for Learning Visual Representations from Video." arXiv 2023.
-3. **Vision Transformer**: Dosovitskiy, A., et al. "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale." ICLR 2021.
-
-## 🤝 Contributing
-
-This is a POC implementation. Contributions welcome for:
-- Real data integration
-- Performance optimizations
-- Additional modalities support
-- Downstream task implementations
-- Documentation improvements
-
-## 📄 License
-
-This project is provided as-is for educational and research purposes. Please ensure compliance with any applicable licenses when using real geospatial data.
+Validates modality fusion, resolution handling, and embedding quality.
 
 ---
 
-**Note**: This is a Proof of Concept implementation designed for the UN Hackathon. The model architecture and training procedures can be adapted for specific geospatial applications and datasets. 
+## 🔧 Integration with Giga Spatial
+
+We’ve included a basic adapter (`giga_spatial_adapter.py`) to demonstrate how JEPA-GFM can interface with **Giga Spatial**, allowing it to consume standardized outputs from Giga Spatial's view generators and data handlers.
+
+Example usage:
+```python
+from giga_spatial_adapter import GigaSpatialAdapter
+adapter = GigaSpatialAdapter()
+layers = adapter.load_standardized_layers("path/to/giga-spatial/output")
+```
+
+---
+
+## 🎯 Use Case: Hurricane Risk for Children
+
+JEPA-GFM was tested in a simulated scenario involving hurricane risk in **Saint Kitts and Nevis**:
+
+1. **Input Layers**:
+   - ECMWF hurricane forecast tracks (raster)
+   - WorldPop child population data (raster)
+   - School locations (point vector)
+   - Administrative boundaries (polygon vector)
+
+2. **Output**:
+   - Estimated number of children exposed to storm surge
+   - Heatmap of high-risk zones with uncertainty estimates
+
+---
+
+## 🧪 Technical Highlights
+
+| Feature | Description |
+|--------|-------------|
+| **Modalities Supported** | Raster (weather, elevation), Vector (points, polygons), Tabular (indicators) |
+| **Self-Supervised Objective** | Latent-space prediction of masked regions |
+| **Resolution Support** | Handles 128x128 to 512x512 pixel inputs |
+| **Model Sizes** | Small (~25M), Base (~85M), Large (~300M) |
+| **Training Strategy** | AdamW optimizer, EMA updates, patch masking |
+
+---
+
+## 📊 Evaluation & Limitations
+
+### Current Capabilities
+- ✅ Self-supervised pre-training on synthetic geospatial data
+- ✅ Modular decoder architecture for task-specific inference
+- ✅ Integration with Giga Spatial data format
+- ✅ Proof-of-concept visualization in Geosight-compatible dashboards
+
+### Known Limitations
+- ⚠️ Uses synthetic data due to time constraints (hackathon setting)
+- ⚠️ Limited to static spatial data (no time-series or temporal modeling yet)
+- ⚠️ Not yet deployed with real-time weather APIs (ECMWF/DWD)
+- ⚠️ Uncertainty quantification needs refinement
+
+---
+
+## 🚧 Future Work
+
+- ✅ Integrate with live weather feeds (ECMWF/DWD)
+- ✅ Add time-series modeling capabilities
+- ✅ Improve uncertainty visualization for non-experts
+- ✅ Expand decoder modules for other hazards (droughts, landslides)
+- ✅ Optimize for deployment within UNICEF's operational workflows
+
+---
+
+## 📚 References
+
+1. **I-JEPA**: Assran, M., et al. *Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture.* CVPR 2023.
+2. **V-JEPA**: Bardes, A., et al. *Revisiting Feature Prediction for Learning Visual Representations from Video.* arXiv 2023.
+3. **Vision Transformer**: Dosovitskiy, A., et al. *An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale.* ICLR 2021.
+4. **Giga Spatial Documentation**: [https://unicef.github.io/giga-spatial/](https://unicef.github.io/giga-spatial/)
+5. **CCRI-DRM Dashboard**: [Geosight Portal](https://geosight.org/)
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! We especially encourage help in the following areas:
+- Integrating real geospatial datasets
+- Improving uncertainty modeling
+- Building additional decoder modules
+- Enhancing documentation and tutorials
+- Optimizing performance for production use
+
+---
+
+## 📄 License
+
+This project is released under the MIT License for educational and research purposes. Please ensure compliance with licensing requirements when integrating real geospatial datasets or deploying in production environments.
+
+---
+
+## 💬 Contact
+
+For questions or collaboration opportunities, please reach out to us:
+- **Kerod Woldesenbet** – kerod5858@gmail.com  
+- **Abem Woldesenbet** – abemkibatu101@gmail.com  
+
+Or contact the challenge owner:
+- **Yves Jaques** – yjaques@unicef.org (UNICEF DAS Computational Analytics and Geospatial Intelligence Unit)
+
+---
+
+## 🎉 Acknowledgments
+
+Special thanks to:
+- UNICEF and ITU for supporting initiatives like **Giga Spatial** and **CCRI-DRM**
+- The UN Hackathon organizers for providing this opportunity
+- The open-source community for foundational libraries like PyTorch, GeoPandas, and H3
