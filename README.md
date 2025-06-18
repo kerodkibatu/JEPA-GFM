@@ -23,7 +23,7 @@ The model was developed as part of the **UN Hackathon Challenge 2: Solving the �
 
 ## 🏗️ Architecture
 
-JEPA-GFM adapts the **JEPA framework** from vision AI to the geospatial domain. It learns high-level representations of diverse spatial data without requiring labeled examples. The architecture includes:
+JEPA-GFM adapts the **V-JEPA framework** from vision AI to the geospatial domain. It learns high-level representations of diverse spatial data without requiring labeled examples. The architecture includes:
 
 1. **Context Encoder**: Encodes visible parts of geospatial data (weather maps, rasters, etc.)
 2. **Target Encoder**: Maintains target representations using exponential moving average (EMA) updates
@@ -85,9 +85,9 @@ python test.py
 Validates modality fusion, resolution handling, and embedding quality.
 
 
-## 🎯 Use Case: Hurricane Risk for Children
+## 🎯 Demo Use Case: Hurricane Risk for Children
 
-JEPA-GFM was tested in a simulated scenario involving hurricane risk in **Saint Kitts and Nevis**:
+JEPA-GFM can be tested in a simulated scenario involving hurricane risk in **Saint Kitts and Nevis**:
 
 1. **Input Layers**:
    - ECMWF hurricane forecast tracks (raster)
