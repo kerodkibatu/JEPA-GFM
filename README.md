@@ -43,21 +43,6 @@ JEPA-GFM adapts the **JEPA framework** from vision AI to the geospatial domain. 
 
 ---
 
-## 📁 Project Structure
-
-```
-jepa-gfm/
-├── jepa.py              # Core JEPA-GFM model implementation
-├── train.py             # Training script with synthetic geospatial data
-├── generate_data.py     # Synthetic data generation mimicking real-world datasets
-├── test.py              # Testing scripts for multi-resolution handling and fusion
-├── giga_spatial_adapter.py  # Adapter module for Giga Spatial integration
-├── requirements.txt     # Python dependencies
-└── README.md           # This file
-```
-
----
-
 ## 🚀 Getting Started
 
 ### Installation
@@ -99,20 +84,6 @@ python test.py
 ```
 Validates modality fusion, resolution handling, and embedding quality.
 
----
-
-## 🔧 Integration with Giga Spatial
-
-We’ve included a basic adapter (`giga_spatial_adapter.py`) to demonstrate how JEPA-GFM can interface with **Giga Spatial**, allowing it to consume standardized outputs from Giga Spatial's view generators and data handlers.
-
-Example usage:
-```python
-from giga_spatial_adapter import GigaSpatialAdapter
-adapter = GigaSpatialAdapter()
-layers = adapter.load_standardized_layers("path/to/giga-spatial/output")
-```
-
----
 
 ## 🎯 Use Case: Hurricane Risk for Children
 
@@ -176,18 +147,6 @@ JEPA-GFM was tested in a simulated scenario involving hurricane risk in **Saint 
 4. **Giga Spatial Documentation**: [https://unicef.github.io/giga-spatial/](https://unicef.github.io/giga-spatial/)
 5. **CCRI-DRM Dashboard**: [Geosight Portal](https://geosight.org/)
 
----
-
-## 🤝 Contributing
-
-Contributions are welcome! We especially encourage help in the following areas:
-- Integrating real geospatial datasets
-- Improving uncertainty modeling
-- Building additional decoder modules
-- Enhancing documentation and tutorials
-- Optimizing performance for production use
-
----
 
 ## 📄 License
 
